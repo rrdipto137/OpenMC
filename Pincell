@@ -1,4 +1,4 @@
-# Pincell-modeling-
+
 
 import openmc
 import matplotlib.pyplot as plt
