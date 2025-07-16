@@ -1,5 +1,4 @@
 
-
 import openmc
 import matplotlib.pyplot as plt
 
@@ -53,7 +52,7 @@ materials.export_to_xml()
 bottom = openmc.ZPlane(z0=-1.0, boundary_type = 'reflective')
 top = openmc.ZPlane(z0=1.0, boundary_type = 'reflective')
 pitch = 1.275 #cm
-pin_cell_box = openmc.rectangular_prism(width=pitch, height=pitch, boundary_type='reflective')
+pin_cell_box = openmc.model.RectangularPrism(width=pitch, height=pitch, boundary_type='reflective')
 
 # Geometry definitions for the fuel rod
 hole     = openmc.ZCylinder(r=0.15/2,name='hole')
@@ -65,7 +64,7 @@ hole_region=-hole
 fuel_region = -fuel_or & +hole
 gap_region  = +fuel_or & -fclad_ir
 fclad_region  = +fclad_ir & -fclad_or
-fwater_region = pin_cell_box & +fclad_or
+fwater_region = -pin_cell_box & +fclad_or
 
 hole_cell=openmc.Cell(name='hole')
 hole_cell.fill=air
@@ -94,24 +93,7 @@ geometry = openmc.Geometry(fuel_pin_universe)
 geometry.export_to_xml()
 
 # Plotting
-#plot = openmc.Plot.from_geometry(geometry)
-#plot.color_by = 'cell'
-#plot.to_ipython_image()
-
-plot = openmc.Plot.from_geometry(geometry)
-plot.color_by = 'material'
-plot.colors = colors = {
-    water: 'blue',
-    fuel: 'yellow',
-    air: 'red',
-    zircalloy4 :'pink',
-    helium:'black'
-    
-}
-plot.to_ipython_image()
-
-plot.pixels = (1024, 1024)
-plot.to_ipython_image()
+geometry.plot(width=(1,1), pixels=(200,200), color_by='material', colors={fuel:'black', zircalloy4:'silver',air:'yellow', helium: 'red'},basis='xz')
 
 
 # OpenMC simulation parameters
@@ -126,4 +108,4 @@ settings.inactive = 10
 settings.particles = 10000
 settings.export_to_xml()
 
-openmc.run()
+#openmc.run()
